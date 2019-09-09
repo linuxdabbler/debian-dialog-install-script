@@ -6,7 +6,7 @@
 
 ##  Define Temp location - "dis" stands for "debian-install-script"
 
-tmd_dir=tmp/dis
+tmd_dir=/tmp/dis
 
 ##  Define some variables because I'm lazy
 
@@ -15,30 +15,30 @@ update='apt update; apt upgrade -y'
 user=$USER
 User=$(getent passwd 1000 | awk -F: '{ print $1}')
 
-## Start of script
+## Start script
+cp /etc/apt/sources.list /etc/apt/sources.list.original
 
 if [[ $EUID -ne 0 ]]; then
-	echo "This script must be run as root... Type: su   then the password and try again"
-	exit 1
+        echo "This script must be run as root type: sudo ./dialog.sh"
+        exit 1
+else
+        #Update and Upgrade
+        echo "Updating and Upgrading"
+        $update
 
-else 
-	#Update and Upgrade
-	echo "Running updates and upgrading everything"
-	$update
+        echo "Creating temporary folder"
+        mkdir $tmp_dir
 
-	echo "Creating temp folder"
-	mkdir $tmp_dir
-
-	
-	$install dialog
-	cmd=(dialog --title "Debian install Script" --separate-output --checklist "Select the Software You Want To Install:" 22 80 16)
-	options=(
+        $install dialog
+        cmd=(dialog --title "LD-Installer" --separate-output --checklist "Please Select Software You Want To Install:" 22 80 16)
+        options=(
 		#A "<----Category: Repositories---->" on
 			1_repos "	Grant Standard User Root Access" off
 			2_repos "	Contrib and Non-free Repos" off
 			3_repos "	Testing Repos" off
 			4_repos "	Unstable Repos" off
 			5_repos "	Experimental Repos" off
+			6_repos "	Return to Original" off
 		#B "<----Category: Alternate Installers---->" on
 			1_installer "	Snap Packages" off
 			2_installer "	Flatpak" off
@@ -85,11 +85,11 @@ else
 			2_email "	Neomutt" off
 			3_email "	Geary" off
 		#H "<----Category: Web Browsers/Downloaders---->" on
-			1_web "		Chromium" off
-			2_web "		Google Chrome" off
-			3_web "		Vivaldi" off
-			4_web "		ICE-SSB-Application" off
-			5_web "		Transmission" off
+			1_web "	Chromium" off
+			2_web "	Google Chrome" off
+			3_web "	Vivaldi" off
+			4_web "	ICE-SSB-Application" off
+			5_web "	Transmission" off
 		#I "<----Category: Networking---->" on
 			1_network "	SAMBA" off
 		#J "<----Category: Graphics---->" on
@@ -152,7 +152,7 @@ else
 		#U "<----Category: System---->" on
 			1_system "	Swappiness=10" off
 			V "Post Install Auto Clean Up & Update" off)
-		choices=$("${cmd[@]}" "${options[@]}" 2>1 >/dev/tty)
+		choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 		clear
 		for choice in $choices
 		do
@@ -168,33 +168,45 @@ else
 		2_repos)
 			#Enable Contrib and Non-free Repos
 			echo "enabling Contrib and Non-free Repos"
+			cat /etc/apt/sources.list >> /etc/apt/sources.list.bak
 			sed -e '/Binary/s/^/#/g' -i /etc/apt/sources.list
 			sed -i 's/main/main contrib non-free/gI' /etc/apt/sources.list
-			$update
+			apt update
 			sleep 1
 			;;
 		3_repos)
 			#Enable Testing Repos
-			echo "enabling Testing Repos"
-			echo "deb http://deb.debian.org/debian testing main contrib non-free" >> /etc/apt/sources.list
-			$update
+			echo "enabling Bullseye Repos"
+			#cat /etc/apt/sources.list >> /etc/apt/sources.list.bak
+			#echo "deb http://deb.debian.org/debian testing main contrib non-free" >> /etc/apt/sources.list
+			apt update
 			sleep 1
 			;;
 		4_repos)
 			#Enable Unstable Repos
 			echo "enabling Unstable Repos"
-			echo "deb http://ftp.us.debian.org/debian unstable main contrib non-free" >> /etc/apt/sources.list
-			echo "deb-src http://ftp.us.debian.org/debain unstable main contrib non-free" >> /etc/apt/sources.list
-			$update
+			#cat /etc/apt/sources.list >> /etc/apt/sources.list.bak
+			#echo "deb http://ftp.us.debian.org/debian unstable main contrib non-free" >> /etc/apt/sources.list
+			#echo "deb-src http://ftp.us.debian.org/debain unstable main contrib non-free" >> /etc/apt/sources.list
+			apt update
 			sleep 1
 			;;
 		5_repos)
 			#Enable Experimental Repos
-			echo "deb http://ftp.us.debian.org/debain experimental main contrib non-free" >> /etc/apt/sources.list
-			echo "deb-src http://ftp.us.debian.org/debian experimental main contrib non-free" >> /etc/apt/sources.list
-			$update
+			cat /etc/apt/sources.list >> /etc/apt/sources.list.bak
+			#echo "deb http://ftp.us.debian.org/debain experimental main contrib non-free" >> /etc/apt/sources.list
+			#echo "deb-src http://ftp.us.debian.org/debian experimental main contrib non-free" >> /etc/apt/sources.list
+			apt update
 			sleep 1
 			;;
+		6_repos)
+			#Return sources.list to original
+			echo "Returning /etc/apt/sources.list to its Original State
+			cat /etc/apt/sources.list.original > /etc/apt/sources.list
+			apt update
+			sleep 1
+			;;
+			
 
 # Section B ---------------------Alternate Installers----------------------------
 		1_installer)
@@ -288,7 +300,7 @@ else
 			sudo apt install p7zip p7zip-full unrar-free  unrar unrar-free unzip zip -yy
 			sleep 1
 			;;
-	
+
 		2_terminal)
 			#Install Firewall
 			echo "Installing UFW"
@@ -1030,18 +1042,3 @@ else
 fi
 
 
-
-
-
-
-
-
-
-
-
-			
-
-
-		
-
-			
