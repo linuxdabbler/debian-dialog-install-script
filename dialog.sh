@@ -35,9 +35,9 @@ else
 		#A "<----Category: Repositories---->" on
 			1_repos "	Grant Standard User Root Access" off
 			2_repos "	Contrib and Non-free Repos" off
-			3_repos "	Testing Repos" off
-			4_repos "	Unstable Repos" off
-			5_repos "	Experimental Repos" off
+#			3_repos "	Testing Repos" off
+#			4_repos "	Unstable Repos" off
+#			5_repos "	Experimental Repos" off
 			6_repos "	Return to Original" off
 		#B "<----Category: Alternate Installers---->" on
 			1_installer "	Snap Packages" off
@@ -174,31 +174,31 @@ else
 			apt update
 			sleep 1
 			;;
-		3_repos)
-			#Enable Testing Repos
-			echo "enabling Bullseye Repos"
-			#cat /etc/apt/sources.list >> /etc/apt/sources.list.bak
-			#echo "deb http://deb.debian.org/debian testing main contrib non-free" >> /etc/apt/sources.list
-			apt update
-			sleep 1
-			;;
-		4_repos)
-			#Enable Unstable Repos
-			echo "enabling Unstable Repos"
-			#cat /etc/apt/sources.list >> /etc/apt/sources.list.bak
-			#echo "deb http://ftp.us.debian.org/debian unstable main contrib non-free" >> /etc/apt/sources.list
-			#echo "deb-src http://ftp.us.debian.org/debain unstable main contrib non-free" >> /etc/apt/sources.list
-			apt update
-			sleep 1
-			;;
-		5_repos)
-			#Enable Experimental Repos
-			cat /etc/apt/sources.list >> /etc/apt/sources.list.bak
-			#echo "deb http://ftp.us.debian.org/debain experimental main contrib non-free" >> /etc/apt/sources.list
-			#echo "deb-src http://ftp.us.debian.org/debian experimental main contrib non-free" >> /etc/apt/sources.list
-			apt update
-			sleep 1
-			;;
+#		3_repos)
+#			#Enable Testing Repos
+#			echo "enabling Bullseye Repos"
+#			#cat /etc/apt/sources.list >> /etc/apt/sources.list.bak
+#			#echo "deb http://deb.debian.org/debian testing main contrib non-free" >> /etc/apt/sources.list
+#			apt update
+#			sleep 1
+#			;;
+#		4_repos)
+#			#Enable Unstable Repos
+#			echo "enabling Unstable Repos"
+#			#cat /etc/apt/sources.list >> /etc/apt/sources.list.bak
+#			#echo "deb http://ftp.us.debian.org/debian unstable main contrib non-free" >> /etc/apt/sources.list
+#			#echo "deb-src http://ftp.us.debian.org/debain unstable main contrib non-free" >> /etc/apt/sources.list
+#			apt update
+#			sleep 1
+#			;;
+#		5_repos)
+#			#Enable Experimental Repos
+#			cat /etc/apt/sources.list >> /etc/apt/sources.list.bak
+#			#echo "deb http://ftp.us.debian.org/debain experimental main contrib non-free" >> /etc/apt/sources.list
+#			#echo "deb-src http://ftp.us.debian.org/debian experimental main contrib non-free" >> /etc/apt/sources.list
+#			apt update
+#			sleep 1
+#			;;
 		6_repos)
 			#Return sources.list to original
 			echo "Returning /etc/apt/sources.list to its Original State
