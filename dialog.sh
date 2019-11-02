@@ -812,7 +812,7 @@ else
 			# Install Steam
 			sudo apt install steam -yy
 			# Install game mode
-			sudo apt install game mode -yy
+			sudo apt install game-mode -yy
 			sleep 1
 			;;
 
