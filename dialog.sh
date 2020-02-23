@@ -13,7 +13,7 @@ tmd_dir=/tmp/dis
 install='apt install'
 update='apt update; apt upgrade -y'
 user=$USER
-User=$(getent passwd 1000 | awk -F: '{ print $1}')
+#User=$(getent passwd 1000 | awk -F: '{ print $1}')
 
 ## Start script
 cp /etc/apt/sources.list /etc/apt/sources.list.original
@@ -143,6 +143,7 @@ else
 			5_desktop "	QT matches GTK" off
 			6_desktop "	Vimix Theme" off
 			7_desktop "	Adapta Theme" off
+			8_desktop "	Polybar" off
 		#S "<----Category: File Systems---->" on
 			1_filesystem "	ZFS" off
 			2_filesystem " 	Exfat" off
@@ -159,10 +160,10 @@ else
 			case $choice in
 # Section A -----------------------Repositories----------------------------
 		1_repos)
-			#Enable root access for standard user
-			echo "Granting Root Access to Standard User"
-			apt install sudo -yy
-			echo "$User ALL=(ALL:ALL)	ALL" >> /etc/sudoers
+				#  Find the standard user you created during installation and make it a variable
+			User=$(getent passwd 1000 |  awk -F: '{ print $1}')
+				#  Echo the user into the sudoers file
+			echo "$User  ALL=(ALL:ALL)  ALL" >> /etc/sudoers
 			sleep 1
 			;;
 		2_repos)
@@ -960,6 +961,23 @@ else
 			echo "Installing Adapta Themes"
 			sudo apt install adapta-gtk-theme -yy
 			sleep 1
+			;;
+			
+		8_desktop)
+			# Install polybar
+			echo "installing Dependencies"	
+			sudo apt install cmake cmake-data libcairo2-dev libxcb1-dev libxcb-ewmh-dev -yy
+			sudo apt install libxcb-icccm4-dev libxcb-image0-dev libxcb-randr0-dev libxcb-util0-dev -yy
+			sudo apt install libxcb-xkb-dev pkg-config python-xcbgen xcb-proto libxcb-xrm-dev -yy
+			sudo apt install libasound2-dev libmpdclient-dev libiw-dev libcurl4-openssl-dev -yy
+			sudo apt install libpulse-dev ccache libxcb-composite0 libxcb-composite0-dev -yy
+				# Download from polybar from github
+			echo "Downloading Polybar form Github"
+			git clone https://github.com/jaagr/polybar.git
+				# Change directories into polybar
+			cd polybar
+			echo "Installing Polybar"
+			./build.sh
 			;;
 
 # Section S -----------------------------------File Systems-------------------------------------------
