@@ -39,6 +39,7 @@ else
 #			4_repos "	Unstable Repos" off
 #			5_repos "	Experimental Repos" off
 			6_repos "	Return to Original" off
+			7_repos "	Liquorx-Kernel" off
 		#B "<----Category: Alternate Installers---->" on
 			1_installer "	Snap Packages" off
 			2_installer "	Flatpak" off
@@ -208,6 +209,16 @@ else
 			sleep 1
 			;;
 			
+		7_repos)
+			#Install dependencies
+			echo "installing dependencies"
+			sudo apt install curl wget apt-transport-https dirmngr
+			echo "getting custom kernel"
+			codename="$(find /etc/apt -type f -name '*.list' | xargs grep -E '^deb' | awk '{print $3}' | grep -Eo '^[a-z]+' | sort | uniq -c | sort -n | tail -n1 | grep -Eo '[a-z]+$')" && sudo apt-get update && sudo apt-get install apt-transport-https && echo -e "deb http://liquorix.net/debian $codename main\ndeb-src http://liquorix.net/debian $codename main\n\n# Mirrors:\n#\n# Unit193 - France\n# deb http://mirror.unit193.net/liquorix $codename main\n# deb-src http://mirror.unit193.net/liquorix $codename main" | sudo tee /etc/apt/sources.list.d/liquorix.list && curl https://liquorix.net/linux-liquorix.pub | sudo apt-key add - && sudo apt-get update
+			echo "DONE"
+			echo "running updates"
+			sudo apt update
+			echo "YOU CAN INSTALL THE NEW KERNEL MANUALLY NOW OR WHEN THIS SCRIPT FINISHES"
 
 # Section B ---------------------Alternate Installers----------------------------
 		1_installer)
